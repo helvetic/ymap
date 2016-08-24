@@ -1,0 +1,95 @@
+html{}
+body,html{
+  height: 100%;
+  background: #eee;
+}
+
+.map{
+  min-height: 100%;
+  background: #ddd;
+}
+
+
+.popup{
+  font-size:13px;
+  position: relative;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1010;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 1px 0 3px rgba(0, 0, 0, 0.3);
+}
+.popup-close{
+  position: absolute;
+  right: 0;
+  top: 0;
+  background: none;
+  border: none;
+  outline: none;
+  font-size: 22px;
+  color: #fff;
+  width: 22px;
+  padding: 0;
+  text-align: center;
+  cursor: pointer;
+  transition: all .3s ease;
+}
+.popup-close:hover{
+  color:#333;
+}
+
+.review-title{
+  background: #ec4d6b;
+  color:#fff;
+  font-size: 13px;
+  margin: 0;
+  padding: 5px 30px 5px 10px;
+  border-radius: 10px 10px 0 0;
+  font-weight: bold;
+}
+.reviews{
+  padding:10px;
+}
+.review-form{
+  padding: 10px;
+  border-top: 1px solid #eee;
+}
+.review-form input,
+.review-form textarea{
+  border:1px solid #ddd;
+  border-radius: 5px;
+  padding:5px;
+  margin:5px 0;
+  font-size:13px;
+  transition: all .3s ease;
+  box-sizing: border-box;
+}
+.review-form input:focus,
+.review-form textarea:focus{
+  border-color: #ec4d6b;
+  outline: none;
+  max-width: 100%;
+}
+.review-form-title{
+  font-size:12px;
+  margin: 0px 0 5px;
+  color: #ec4d6b;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+.review-form-add-btn{
+  color: #fff;
+  background: #ec4d6b;
+  border-radius: 5px;
+  padding:5px;
+  margin:5px 0;
+  font-size:13px;
+  border:none;
+  cursor: pointer;
+  transition: all .3s ease;
+}
+.review-form-add-btn:hover{
+  background: #333;
+}
