@@ -92,8 +92,6 @@ new Promise(resolve => {
             balloonContentLayout: View.BalloonContent()
           }
         );
-        console.log(clusterer.getGeoObjects());
-        console.log('newPlacemark',newPlacemark.properties.get('reviews'));
         clusterer.add(newPlacemark);
       });
     }else if(e.target.dataset.role == "show-object"){
