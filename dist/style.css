@@ -112,11 +112,13 @@ body,html{
   border-top: 1px solid #ddd;
 }
 .reviews-item-top{
-    margin-bottom: 5px;
+    padding: 5px;
     word-break: break-word;
+    background: #f1f1f1;
 }
 .reviews-item-top>*{
-  margin-right: 5px;
+  margin: 2px 5px 2px 0;
+  display: inline-block;
 }
 .reviews-item-name{
   font-weight: bold;
@@ -127,11 +129,32 @@ body,html{
 .reviews-item-date{
   color: #777;
 }
-.reviews-item-comment{}
+.reviews-item-comment{
+    padding: 5px;
+}
 .reviews-item-date{
   float:right;
   font-size: 12px;
 }
 .reviews-empty{
   padding: 10px 0;
+}
+
+.carousel-item{
+  height: 160px;
+  position: relative;
+}
+.carousel-header{
+  margin: 0;
+}
+.carousel-item .reviews{
+  padding: 0;
+}
+.carousel-date{
+  position: absolute;
+  bottom:0;
+  right:0;
+}
+.show-placemark{
+  
 }

@@ -25,8 +25,8 @@ export let View = {
         <input type="text" placeholder="Ваше имя" class="review-form-name" name="name">
         <input type="text" placeholder="Укажите место" class="review-form-place" name="place">
         <textarea placeholder="Поделитесь впечатлениями" class="review-form-comment" name="comment"></textarea>
+        <button data-role="add" id="add_review" class="review-form-add-btn">Добавить</button>
       </form>
-      <button data-role="add" id="add_review" class="review-form-add-btn">Добавить</button>
       `
     );
   },
@@ -58,19 +58,17 @@ export let View = {
   },
   itemContentLayout : function(){
     return ymaps.templateLayoutFactory.createClass(
-      `<h3 class=ballon_header>{{ properties.reviews[0].place }} {{ properties.name }}</h3>
-      <div class="reviews">
-        {% for review in properties.reviews %}
-        <div class="reviews-item">
-          <button class="show-placemark" data-index="{{ properties.index }}" data-role="show-balloon">Открыть</button>
-          <div class="reviews-item-top">
-            <span class="reviews-item-place">{{review.place}}</span>
-            <span class="reviews-item-name">{{review.name}}</span>
+      `<div class="carousel-item">
+        <h3 class="carousel-header">{{properties.reviews.place}}</h3>
+        <div class="reviews">
+          <div class="reviews-item">
+            <div class="reviews-item-top">
+              <a href="#" class="show-placemark" data-index="{{ properties.index }}" data-role="show-object">{{ properties.name }}</a>
+            </div>
+            <div class="reviews-item-comment">{{properties.reviews.comment}}</div>
+            <div class="reviews-item-date carousel-date">{{properties.reviews.date}}</div>
           </div>
-          <div class="reviews-item-comment">{{review.comment}}</div>
-          <div class="reviews-item-date carousel-date">{{review.date}}</div>
         </div>
-        {% endfor %}
       </div>`
     );
   }
