@@ -1,113 +1,115 @@
 import {Model} from './modules/Model';
 import {View} from './modules/View';
-// import {MyBalloonLayout} from './modules/Balloon';
-import Controller from './modules/Controller'
-// import Behavior from './modules/Behavior';
 
 
 new Promise(resolve => {
   resolve(Model.ready([55.76, 37.64]));
 
+
 }).then((myMap) => {
+
+
+  let clusterer = new ymaps.Clusterer({
+    clusterDisableClickZoom: true,
+    clusterOpenBalloonOnClick: true,
+    clusterBalloonPanelMaxMapArea: 0,
+    clusterBalloonContentLayoutWidth: 350,
+    clusterBalloonContentLayout: 'cluster#balloonCarousel',
+    clusterBalloonItemContentLayout: View.itemContentLayout(),
+    clusterBalloonLeftColumnWidth: 120
+  });
+  myMap.geoObjects.add(clusterer);
+
+
   myMap.events.add('click', function (e) {
-    var coords = e.get('coords');
-    let newPlacemark = Model.createPlacemark(coords, View.BalloonLayout(),View.BalloonContent());
-    Model.getAddress(newPlacemark,coords);
-    myMap.geoObjects.add(newPlacemark);
-    newPlacemark.balloon.open().then(() => {
-      newPlacemark.balloon.events.add('click', e => {
-        e.preventDefault();
-        newPlacemark.properties.set({});
-        let target = document.getElementById('add_review');
-        if(target.dataset.role == 'add'){
-          newPlacemark.properties.set({exists:true});
+    let coords = e.get('coords');
+    openBaloon(coords);
+  });
+
+  myMap.geoObjects.events.add('click', e => {
+    let object = e.get('target');
+    if(object.properties.get('placemark')){
+      let coords = e.get('coords');
+      e.preventDefault();
+      openBaloon(coords)
+    }
+  });
+
+
+  function openBaloon(coords){
+    Model.getAddress(coords).then(addr => {
+      let reviews = clusterer.getGeoObjects()
+        .map(el => {
+          return el.properties.get('reviews');
+        });
+      // let rewiewsFiltered = clusterer.getGeoObjects()
+      //   .filter(el => {
+      //     if(el.geometry.getCoordinates() == coords){
+      //       return true;
+      //     }
+      //   })
+      //   .map(el => {
+      //     return el.geometry.getCoordinates();
+      //   });
+      // console.log('reviews',coords,rewiewsFiltered, clusterer.getGeoObjects().map(el => {
+      //     return el.geometry.getCoordinates();
+      //   }));
+      myMap.balloon.open(coords,
+        {
+          properties: {
+            name: addr,
+            reviews: reviews
+          }
+        },
+        {
+            layout: View.BalloonLayout(),
+            contentLayout: View.BalloonContent()
         }
+      ).then(() => {
+        document.querySelector('.popup').addEventListener('click', e => {
+          console.log('popup');
+          if(e.target.id == "add_review"){
+            console.log('add_review');
+            e.preventDefault();
+            let form = document.forms.review;
+            let review = {
+                date: new Date().toLocaleString(),
+                name: form.elements.name.value,
+                place: form.elements.place.value,
+                comment: form.elements.comment.value
+              };
+            console.log(myMap.balloon._balloon._data.properties);
+            console.log(myMap.balloon);
+            myMap.balloon.setData({
+              properties: {
+                name: addr,
+                reviews: reviews.concat(review)
+              }
+            });
+            let newPlacemark = new ymaps.Placemark(coords,
+              {
+                placemark: true,
+                name: addr,
+                reviews: review
+              },
+              {
+                balloonLayout: View.BalloonLayout(),
+                balloonContentLayout: View.BalloonContent()
+              }
+            );
+            clusterer.add(newPlacemark);
+          }
+        });
       });
-      newPlacemark.events.add('balloonclose', e => {
-        if(!newPlacemark.properties.get('exists')){
-          myMap.geoObjects.remove(newPlacemark);
-        }
-      });
+
     });
+  }
 
 
+  document.getElementById('set-balloon-header').addEventListener('click', function () {
+    clusterer.balloon.open();
   });
-  return myMap;
-}).then((myMap) => {
-  myMap.events.add('click', function (e) {
-    // console.log('then',myMap);
-  });
-  // console.log(myMap);
-
 
 }).catch(function(e) {
     console.error(e);
-    alert('Ошибка: ' + e.message);
 });
-
-//
-// var myMap;
-// ymaps.ready(function () {
-//     myMap = new ymaps.Map("ya_map", {
-//         center: [55.76, 37.64],
-//         zoom: 10,
-//         controls: ["zoomControl", "fullscreenControl"]
-//     });
-//
-//     myMap.events.add('click', function (e) {
-//         // Получение координат щелчка
-//         var coords = e.get('coords');
-//         console.log(coords.join(', '));
-//
-//         var plc = new Promise(resolve => {
-//           var myPlacemark = new ymaps.Placemark(coords,
-//             {
-//               balloonContentHeader: 'Однажды',
-//               balloonContentBody: 'В студёную зимнюю пору',
-//               balloonContentFooter: 'Мы пошли в гору',
-//               hintContent: 'Зимние происшествия'
-//             },
-//             {balloonContentLayout: MyBalloonContentLayoutClass}
-//           );
-//           if(myPlacemark){
-//             resolve(myPlacemark);
-//           }
-//         });
-//
-//         plc.then((myPlacemark) => {
-//           console.log('promise');
-//           getAddress(myPlacemark,myPlacemark.geometry.getCoordinates())
-//           console.log(myPlacemark.properties);
-//           myMap.geoObjects.add(myPlacemark);
-//           myPlacemark.balloon.open();
-//           let geo = ymaps.geocode(coords).then(res => {
-//             console.log('geo', res.geoObjects.get(0));
-//           });
-//
-//         })
-//
-//         // Балун откроется в точке «привязки» балуна — т. е. над меткой.
-//     });
-//
-//     var MyBalloonContentLayoutClass = ymaps.templateLayoutFactory.createClass(
-//         '<h3>{{ properties.name }}</h3>' +
-//         '<p>Описание: {{ properties.description }}</p>' +
-//         '<p>Население: {{ properties.population|default:"неизвестно" }}</p>' +
-//         '<p>Метрополитен: {% if properties.metro %}да{% else %}нет{% endif %}</p>'
-//
-//     );
-//
-//     function getAddress(myPlacemark,coords) {
-//         myPlacemark.properties.set('iconCaption', 'поиск...');
-//         ymaps.geocode(coords).then(function (res) {
-//             var firstGeoObject = res.geoObjects.get(0);
-//             console.log('firstGeoObject',firstGeoObject.properties);
-//             myPlacemark.properties
-//                 .set({
-//                     name: firstGeoObject.properties.get('name'),
-//                     description: firstGeoObject.properties.get('text')
-//                 });
-//         });
-//     }
-//
-// });
